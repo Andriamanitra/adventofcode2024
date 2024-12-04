@@ -1,0 +1,26 @@
+(defn tokenize (input)
+    (put default-peg-grammar :int ~(number :d+))
+    (def mul ~(replace (sequence "mul(" :int "," :int ")") ,|(* $0 $1)))
+    (peg/match ~(some (choice ,mul (<- "do()") (<- "don't()") 1)) input)
+)
+
+(defn solve-part-1 (input)
+    (def multiplication-results (filter number? (tokenize input)))
+    (printf "Part 1: %q" (sum multiplication-results))
+)
+
+(defn solve-part-2 (input)
+    (var enabled true)
+    (var total 0)
+    (each tok (tokenize input)
+        (match tok
+            "do()"    (set enabled true)
+            "don't()" (set enabled false)
+            (when enabled (+= total tok))
+        )
+    )
+    (printf "Part 2: %q" total)
+)
+
+(def input (slurp "input.txt"))
+((juxt solve-part-1 solve-part-2) input)
