@@ -1,0 +1,23 @@
+(defn parse-input (input)
+    (defn transpose (m)
+        (def width (length (0 m)))
+        (map (fn (i) (map |(i $) m)) (range width))
+    )
+    (def num ~(number :d+))
+    (def input-line ~(group (sequence ,num :s+ ,num :s*)))
+    (transpose (peg/match ~(some ,input-line) input))
+)
+
+(defn solve-part-1 (@[lefts rights])
+    (def distances (map |(math/abs (- $0 $1)) (sort lefts) (sort rights)))
+    (printf "Part 1: %q" (sum distances))
+)
+
+(defn solve-part-2 (@[lefts rights])
+    (def freq-map (frequencies rights))
+    (def distances (map |(* $ (in freq-map $ 0)) lefts))
+    (printf "Part 2: %q" (sum distances))
+)
+
+(def input (parse-input (slurp "input.txt")))
+((juxt solve-part-1 solve-part-2) input)
