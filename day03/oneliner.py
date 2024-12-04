@@ -1,0 +1,3 @@
+# someone doubted my ability to solve this on one line...
+
+print(sum(__import__("math").prod([(quit := (quit and tok != "don't()") or (not quit and tok == "do()")), bool(__import__("re").compile(r"\d+").findall(tok)), *map(int,__import__("re").compile(r"\d+").findall(tok))]) for tok in __import__("re").compile(r"mul\(\d+,\d+\)|do\(\)|don't\(\)").findall(open("input.txt").read())))
