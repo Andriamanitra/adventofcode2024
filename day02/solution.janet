@@ -1,0 +1,30 @@
+(defn parse-input (input)
+    (put default-peg-grammar :NL ~(choice "\r\n" "\n"))
+    (put default-peg-grammar :int ~(number :d+))
+    (def input-line ~(group (sequence :int (some (sequence " " :int)) :NL)))
+    (peg/match ~(some ,input-line) input)
+)
+
+(defn safe? (seq)
+    (or
+        (all |(<= 1 (- ($ seq) ((dec $) seq)) 3) (range 1 (length seq)))
+        (all |(<= -3 (- ($ seq) ((dec $) seq)) -1) (range 1 (length seq)))
+    )
+)
+
+(defn solve-part-1 (grid)
+    (printf "Part 1: %q" (count safe? grid))
+)
+
+(defn solve-part-2 (grid)
+    (defn safe-without-nth? (seq n)
+        (safe? [;(array/slice seq 0 n) ;(array/slice seq (inc n))])
+    )
+    (defn safe-after-removing-one? (seq)
+        (any? (map |(safe-without-nth? seq $) (range (length seq))))
+    )
+    (printf "Part 2: %q" (count safe-after-removing-one? grid))
+)
+
+(def input (parse-input (slurp "input.txt")))
+((juxt solve-part-1 solve-part-2) input)
