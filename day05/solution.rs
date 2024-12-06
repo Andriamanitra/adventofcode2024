@@ -41,11 +41,13 @@ fn main() -> std::io::Result<()> {
     for update in &input.updates {
         let ordered = {
             let mut update = update.clone();
+            // actually not sure if the subgraphs are guaranteed to have
+            // total ordering but this works on my input...
             update.sort_by(|&a, &b| {
-                if input.dependencies[a][b] {
-                    std::cmp::Ordering::Less
-                } else {
-                    std::cmp::Ordering::Equal
+                match input.dependencies[a][b] {
+                    true => std::cmp::Ordering::Less,
+                    false if input.dependencies[b][a] => std::cmp::Ordering::Greater,
+                    false => std::cmp::Ordering::Equal,
                 }
             });
             update
