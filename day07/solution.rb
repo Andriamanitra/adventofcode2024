@@ -7,7 +7,7 @@ class Integer
   def concat(other) = self * (10 ** other.to_s.size) + other
 end
 
-part1, part2 = [%i'* +', %i'* + concat'].map do |operators|
+part1, part2 = [%i(* +), %i(* + concat)].map do |operators|
   input.sum do |target, initial, *nums|
     operators.repeated_permutation(nums.size).any? do |permutation|
       ops = permutation.each
