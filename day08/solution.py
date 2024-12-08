@@ -4,8 +4,8 @@ from collections.abc import Callable, Generator
 with open("input.txt") as f:
     lines = [line.rstrip() for line in f]
 
-max_x = len(lines) - 1
-max_y = len(lines[0]) - 1
+MAX_X = len(lines) - 1
+MAX_Y = len(lines[0]) - 1
 
 type Pos = tuple[int, int]
 
@@ -26,23 +26,28 @@ def find_antinodes(
     return antinodes
 
 
+def inbounds(pos: Pos) -> bool:
+    x, y = pos
+    return 0 <= x <= MAX_X and 0 <= y <= MAX_Y
+
+
 def generate_antinodes_part_1(a: Pos, b: Pos) -> Generator[Pos]:
     ax, ay = a
     bx, by = b
     Δx, Δy = ax - bx, ay - by
-    for x, y in ((ax + Δx, ay + Δy), (bx - Δx, by - Δy)):
-        if 0 <= x <= max_x and 0 <= y <= max_y:
-            yield x, y
+    for pos in ((ax + Δx, ay + Δy), (bx - Δx, by - Δy)):
+        if inbounds(pos):
+            yield pos
 
 
 def generate_antinodes_part_2(a: Pos, b: Pos) -> Generator[Pos]:
     ax, ay = a
     bx, by = b
     Δx, Δy = ax - bx, ay - by
-    while 0 <= ax <= max_x and 0 <= ay <= max_y:
+    while inbounds((ax, ay)):
         yield ax, ay
         ax, ay = ax + Δx, ay + Δy
-    while 0 <= bx <= max_x and 0 <= by <= max_y:
+    while inbounds((bx, by)):
         yield bx, by
         bx, by = bx - Δx, by - Δy
 
