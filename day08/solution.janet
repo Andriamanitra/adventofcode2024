@@ -23,32 +23,36 @@
 (def [antennas-by-freq max-x max-y] (read-input (slurp "input.txt")))
 
 (defn find-antinodes [part]
-    (def antinodes @{})
-    (loop [antennas :in antennas-by-freq
-           a :in antennas
-           b :in antennas
-           :when (not= a b)
-          ]
-        (def {:x ax :y ay} a)
-        (def {:x bx :y by} b)
-        (def [Δx Δy] [(- ax bx) (- ay by)])
-        (case part
-            1 (let [x (+ ax Δx) y (+ bx Δx)]
-                (when (and (<= 0 x max-x) (<= 0 y max-y))
-                    (update antinodes [x y] |(inc (or $ 0)))
+    (eval
+        ~(do
+            (def antinodes @{})
+            (loop [antennas :in antennas-by-freq
+                   a :in antennas
+                   b :in antennas
+                   :when (not= a b)
+                  ]
+                (def {:x ax :y ay} a)
+                (def {:x bx :y by} b)
+                (def [Δx Δy] [(- ax bx) (- ay by)])
+                ,(case part
+                    1 '(let [x (+ ax Δx) y (+ bx Δx)]
+                        (when (and (<= 0 x max-x) (<= 0 y max-y))
+                            (update antinodes [x y] |(inc (or $ 0)))
+                        )
+                    )
+                    2 '(do
+                        (var [x y] [ax ay])
+                        (while (and (<= 0 x max-x) (<= 0 y max-y))
+                            (update antinodes [x y] |(inc (or $ 0)))
+                            (+= x Δx)
+                            (+= y Δy)
+                        )
+                    )
                 )
             )
-            2 (do
-                (var [x y] [ax ay])
-                (while (and (<= 0 x max-x) (<= 0 y max-y))
-                    (update antinodes [x y] |(inc (or $ 0)))
-                    (+= x Δx)
-                    (+= y Δy)
-                )
-            )
+            antinodes
         )
     )
-    antinodes
 )
 
 (each part [1 2]
