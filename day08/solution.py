@@ -16,10 +16,10 @@ def find_antinodes(
 ) -> set[Pos]:
     seen = defaultdict[str, list[Pos]](list)
     antinodes = set[Pos]()
-    for i1, line in enumerate(grid):
-        for j1, ch in enumerate(line):
+    for x, line in enumerate(grid):
+        for y, ch in enumerate(line):
             if ch.isalnum():
-                pos = i1, j1
+                pos = x, y
                 for other_pos in seen[ch]:
                     antinodes.update(antinodes_from_pair(pos, other_pos))
                 seen[ch].append(pos)
