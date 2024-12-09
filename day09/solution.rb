@@ -1,27 +1,24 @@
-ARGV << "input.txt"
-s = ARGF.read.chomp
+s = ARGF.readline.chomp
 
-total_length = s.chars.sum(&:to_i)
+total_length = s.each_char.sum(&:to_i)
 spaces = [nil] * total_length
-id = 0
-i = 0
-is_space = false
-s.each_char do |c|
+
+pos = 0
+s.each_char.zip([false, true].cycle, 0..) do |c, is_space, idx|
   length = c.to_i
   if is_space
-    i += length
+    pos += length
   else
+    id = idx / 2
     length.times do
-      spaces[i] = id
-      i += 1
+      spaces[pos] = id
+      pos += 1
     end
-    id += 1
   end
-  is_space = !is_space
 end
 
 left = 0
-right = i
+right = pos
 while left < right
   while left < right && !spaces[left].nil?
     left += 1
@@ -34,54 +31,44 @@ while left < right
   end
 end
 
-p spaces.compact.each_with_index.sum{_1 * _2}
+p spaces.each_with_index.sum { |val, idx| val.to_i * idx }
 
 filled = []
-empty = Hash.new{|h,k| h[k] = []}
-id = 0
+empty_spots = Array.new(10) { [] }
+
 i = 0
-s.each_char.zip([false, true].cycle) do |c, is_space|
-  if c.to_i > 0
-    if is_space
-      empty[c.to_i].push(i)
-    else
-      filled.push([i, c.to_i, id])
-      id += 1
-    end
-    i += c.to_i
+s.each_char.zip([false, true].cycle, 0..) do |c, is_space, idx|
+  length = c.to_i
+  next if length.zero?
+  if is_space
+    empty_spots[length].push(i)
+  else
+    id = idx / 2
+    filled.push([i, length, id])
   end
+  i += length
 end
 
-moved = []
-filled.reverse_each do |i, length, id|
-  best_i = nil
+moved = filled.reverse_each.map do |i, length, id|
+  best_i = i
   best_length = nil
   (length..9).each do |len|
-    found = empty.dig(len, 0)
-    if !found.nil? && (best_i.nil? || best_i > found)
-      if found < i
-        best_i = found
-        best_length = len
-      end
+    next if empty_spots[len].empty?
+    if empty_spots[len][0] < best_i
+      best_i = empty_spots[len][0]
+      best_length = len
     end
   end
-  if best_i.nil?
-    moved.push([i, length, id])
-  else
-    moved.push([best_i, length, id])
-    empty[best_length].shift
+  if best_i < i
+    empty_spots[best_length].shift
     rem = best_length - length
     if rem > 0
-      empty[rem].push(best_i + length)
-      empty[rem].sort!
+      new_empty_idx_spots = best_i + length
+      e = empty_spots[rem].bsearch_index { |i| i >= new_empty_idx_spots }
+      empty_spots[rem].insert(e, new_empty_idx_spots)
     end
   end
+  [best_i, length, id]
 end
 
-spaces = [nil] * total_length
-moved.each do |i, length, id|
-  (i...i+length).each do |idx|
-    spaces[idx] = id
-  end
-end
-p spaces.each_with_index.sum{|val, i| val.to_i * i }
+p moved.sum { |i, length, id| id * (i...i+length).sum }
