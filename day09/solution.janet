@@ -46,10 +46,26 @@
         (not (has-key? shifted-files file-id))
     )
 
+    (def finder-cursors (array/new-filled 10 0))
     (defn find-shifted [files min-pos max-len]
-        (->> files
-            (take-while (fn [[file-id pos len]] (<= min-pos pos)))
-            (find (fn [[file-id pos len]] (and (not-shifted? file-id) (<= len max-len))))
+        (def i (max-len finder-cursors))
+        (var found nil)
+        (loop [j :range [i (length files)]
+               :let [[file-id pos len] (j files)]
+               :while (<= min-pos pos)
+               :until found
+               :when (and (not-shifted? file-id) (<= len max-len))
+              ]
+            (set found [j [file-id pos len]])
+        )
+        (match found
+            [new-i found-file] (do
+                (for m 0 (+ max-len 1)
+                    (update finder-cursors m |(max new-i $))
+                )
+                found-file
+            )
+            nil
         )
     )
 
