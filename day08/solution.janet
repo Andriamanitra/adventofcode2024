@@ -33,7 +33,7 @@
         (def {:x bx :y by} b)
         (def [Δx Δy] [(- ax bx) (- ay by)])
         (case part
-            1 (let [x (+ ax Δx) y (+ bx Δx)]
+            1 (let [x (+ ax Δx) y (+ ay Δy)]
                 (when (and (<= 0 x max-x) (<= 0 y max-y))
                     (update antinodes [x y] |(inc (or $ 0)))
                 )
