@@ -15,11 +15,10 @@ def regions_of(grid: dict[Pos, str]) -> set[Region]:
     regions = {pos: {pos} for pos in grid}
     for pos, this in grid.items():
         for npos in neighbors_of(pos):
-            neighbor = grid.get(npos)
-            if neighbor == this:
+            if grid.get(npos) == this:
                 regions[pos] |= regions[npos]
-            for p in regions[pos]:
-                regions[p] = regions[pos]
+                for p in regions[npos]:
+                    regions[p] = regions[pos]
     return {frozenset(region) for region in regions.values()}
 
 def edges_of(region: Region) -> set[Edge]:
