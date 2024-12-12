@@ -23,8 +23,7 @@ mutable struct Region
 end
 
 function solve(grid)
-    width, height = size(grid)
-    indices = collect(1:*(size(grid)...))
+    indices = collect(1 : reduce(*, size(grid)))
     uf = reshape(indices, size(grid))
 
     for idx in CartesianIndices(grid)
