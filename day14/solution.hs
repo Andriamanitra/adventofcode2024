@@ -1,5 +1,4 @@
 import System.IO (readFile')
-import Data.List (groupBy)
 
 type Pos = (Int, Int)
 type Speed = (Int, Int)
