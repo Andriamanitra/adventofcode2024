@@ -1,6 +1,7 @@
+(def input (slurp (or (get (dyn *args*) 1) "input.txt")))
 (def grid-size [101 103])
 (def robots
-    (->> (slurp "input.txt")
+    (->> input
         (peg/match
             ~{
                 :main (sequence :robot (any (sequence "\n" :robot)))
