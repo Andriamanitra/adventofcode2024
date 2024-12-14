@@ -94,7 +94,7 @@
 )
 
 (defn find-easter-egg [robots [width height]]
-    (print "Moving robots in search of an christmas tree...")
+    (print "Moving robots in search of a christmas tree...")
     (var robots robots)
     (var found nil)
     # all of the robots MUST be back to their starting positions
