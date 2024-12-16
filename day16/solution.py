@@ -52,7 +52,7 @@ arrived_from = {}
 while q:
     score, pos, facing = heappop(q)
     if score > BEST_SCORE:
-        continue
+        break
 
     if pos == goal:
         BEST_SCORE = score
