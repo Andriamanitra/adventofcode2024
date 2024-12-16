@@ -56,15 +56,16 @@ def print_maze_and_path(maze: Maze, path: set[Pos]) -> None:
         print(row)
 
 
-def solve(maze: Maze, start: Pos, goal: Pos) -> None:
+def solve(maze: Maze, start: Pos, goal: Pos) -> tuple[int, set[Pos]]:
     lowest_score = float("inf")
     visited = {}
     arrived_from = {}
+    tiles_visited = set()
     q = [(0, start, East), (2000, start, West)]
     while q:
         score, pos, facing = heappop(q)
         if score > lowest_score:
-            return
+            break
 
         if pos == goal:
             lowest_score = score
@@ -72,10 +73,7 @@ def solve(maze: Maze, start: Pos, goal: Pos) -> None:
             for pos, facing in path:
                 if pos != start:
                     path.extend(arrived_from[pos, facing])
-            tiles_visited = {pos for pos, _ in path}
-            # print_maze_and_path(maze, tiles_visited)
-            print(f"(Part 1) Arrived at goal with {score=}")
-            print(f"(Part 2) Visited {len(tiles_visited)} tiles along the best paths")
+            tiles_visited.update(pos for pos, _ in path)
         else:
             options = (
                 (facing, 1),
@@ -93,6 +91,7 @@ def solve(maze: Maze, start: Pos, goal: Pos) -> None:
                         heappush(q, (nextcost, nextpos, nextfacing))
                     elif previous_cost == nextcost:
                         arrived_from[nextpos, nextfacing].append((pos, facing))
+    return lowest_score, tiles_visited
 
 
 if __name__ == "__main__":
@@ -101,4 +100,7 @@ if __name__ == "__main__":
     with open(filename) as f:
         input_str = f.read()
     start, goal, maze = parse_maze(input_str)
-    solve(maze, start, goal)
+    lowest_score, tiles_visited = solve(maze, start, goal)
+    # print_maze_and_path(maze, tiles_visited)
+    print(f"(Part 1) Arrived at goal with score = {lowest_score}")
+    print(f"(Part 2) Visited {len(tiles_visited)} tiles along the best paths")
