@@ -16,10 +16,7 @@ RIGHT = {
 LEFT = {v: k for k, v in RIGHT.items()}
 
 
-def read_maze(filename: str) -> tuple[Pos, Pos, Maze]:
-    with open("input.txt") as f:
-        input_str = f.read()
-
+def parse_maze(input_str: str) -> tuple[Pos, Pos, Maze]:
     start, goal = None, None
     maze = {}
     for i, line in enumerate(input_str.split()):
@@ -99,5 +96,9 @@ def solve(maze: Maze, start: Pos, goal: Pos) -> None:
 
 
 if __name__ == "__main__":
-    start, goal, maze = read_maze("input.txt")
+    import sys
+    filename = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
+    with open(filename) as f:
+        input_str = f.read()
+    start, goal, maze = parse_maze(input_str)
     solve(maze, start, goal)
