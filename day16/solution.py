@@ -76,10 +76,9 @@ def solve(maze: Maze, start: Pos, goal: Pos) -> None:
                 if pos != start:
                     path.extend(arrived_from[pos, facing])
             tiles_visited = {pos for pos, _ in path}
-            n_tiles = len(set(tiles_visited))
             # print_maze_and_path(maze, tiles_visited)
             print(f"(Part 1) Arrived at goal with {score=}")
-            print(f"(Part 2) Visited {n_tiles} tiles along the best paths")
+            print(f"(Part 2) Visited {len(tiles_visited)} tiles along the best paths")
         else:
             options = (
                 (facing, 1),
