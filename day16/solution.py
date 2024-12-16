@@ -63,7 +63,7 @@ def solve(maze: Maze, start: Pos, goal: Pos) -> None:
     lowest_score = float("inf")
     visited = {}
     arrived_from = {}
-    q = [(0, start, East)]
+    q = [(0, start, East), (2000, start, West)]
     while q:
         score, pos, facing = heappop(q)
         if score > lowest_score:
@@ -84,7 +84,6 @@ def solve(maze: Maze, start: Pos, goal: Pos) -> None:
                 (facing, 1),
                 (LEFT[facing], 1001),
                 (RIGHT[facing], 1001),
-                (LEFT[LEFT[facing]], 2001),
             )
             for nextfacing, cost in options:
                 nextpos = step(pos, nextfacing)
