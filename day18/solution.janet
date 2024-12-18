@@ -28,23 +28,37 @@
 )
 
 (defn shortest-path [origin target grid]
+    (def q @[origin])
+    (def visited (thaw grid))
+
     (defn inbounds [[x y]]
         (def [target-x target-y] target)
         (and (<= 0 x target-x) (<= 0 y target-y))
     )
 
-    (def q @[[origin 0]])
-    (def visited (table/clone grid))
+    (defn backtrack-from [pos]
+        (var curr pos)
+        (def path @[])
+        (while (not= origin curr)
+            (array/push path curr)
+            (set curr (get-in visited curr))
+        )
+        path
+    )
+
     (label result
-        (each [[x y] number-of-steps] q
-            (when (= [x y] target) (return result number-of-steps))
+        (each [x y] q
+            (when (= [x y] target)
+                (return result (backtrack-from target))
+            )
             (each neighbor [ [(inc x) y] [(dec x) y] [x (inc y)] [x (dec y)] ]
                 (when (and (inbounds neighbor) (nil? (get-in visited neighbor)))
-                    (put-in visited neighbor true)
-                    (array/push q [neighbor (inc number-of-steps)])
+                    (put-in visited neighbor [x y])
+                    (array/push q neighbor)
                 )
             )
         )
+        (return result nil)
     )
 )
 
@@ -53,7 +67,27 @@
         (take 1024)
         (make-grid)
         (shortest-path from to)
+        (length)
+    )
+)
+
+(defn solve-part2 [falling-bytes from to]
+    (def grid @{})
+    (var i 0)
+    (var path (shortest-path from to grid))
+    (label result
+        (loop [obstacle :in falling-bytes]
+            (put-in grid obstacle true)
+            (when (has-value? path obstacle)
+                (set path (shortest-path from to grid))
+                (when (nil? path)
+                    (return result (string/join (map string obstacle) ","))
+                )
+            )
+            (++ i)
+        )
     )
 )
 
 (print "Part 1: " (solve-part1 input [0 0] [70 70]))
+(print "Part 2: " (solve-part2 input [0 0] [70 70]))
