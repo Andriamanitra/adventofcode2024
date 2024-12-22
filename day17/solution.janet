@@ -129,11 +129,11 @@
         :error
             (fn [self reason where]
                 (eprinf
-                    "\u001b[31m[ERROR]\u001b[0m %s \u001b[30;1m@ %s\u001b[0m\n\u001b[30;1m- cpu state:\u001b[0m "
+                    "\u001b[31m[ERROR]\u001b[0m %s \u001b[30;1m@ %s\u001b[0m\n\u001b[30;1m- cpu state:\u001b[0m %s"
                     reason
                     where
+                    (:display-state self)
                 )
-                (:print-state self)
                 (os/exit 1)
             )
 
