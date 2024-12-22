@@ -6,19 +6,11 @@
 )
 
 (defn evolve [n]
-    (defn prune [n] (band n 0xFFFFFF))
-    (defn mul64 [n] (blshift n 6))
-    (defn div32 [n] (brshift n 5))
-    (defn mul2048 [n] (blshift n 11))
-    (defn mix-with [n func] (bxor n (func n)))
-    (-> n
-        (mix-with mul64)
-        prune
-        (mix-with div32)
-        prune
-        (mix-with mul2048)
-        prune
-    )
+    (var x n)
+    (set x (band 0xFFFFFF (bxor x (blshift x 6))))
+    (set x (bxor x (brshift x 5)))
+    (set x (band 0xFFFFFF (bxor x (blshift x 11))))
+    x
 )
 (def evolve-2000-times (comp ;(seq [:repeat 2000] evolve)))
 
@@ -40,10 +32,9 @@
         )
     )
     (for i 4 2001
-        (def diff-seq (tuple ;(array/slice diffs (- i 4) i)))
-        (when (not (has-key? prices diff-seq))
-            (def price (i xs))
-            (put prices diff-seq price)
+        (def k (tuple ;(array/slice diffs (- i 4) i)))
+        (when (not (has-key? prices k))
+            (put prices k (i xs))
         )
     )
     prices
